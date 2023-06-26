@@ -1,0 +1,14 @@
+[project]
+name = "electora_py"
+authors = [{name = "Owen Campbell", email = "owen.campbell@empiria.co.uk"}]
+readme = "README.md"
+license = {file = "LICENSE"}
+classifiers = ["License :: OSI Approved :: MIT License"]
+dynamic = ["version", "description"]
+
+[project.urls]
+Home = "https://electora.eu"
+
+[build-system]
+requires = ["flit_core >=3.2,<4"]
+build-backend = "flit_core.buildapi"

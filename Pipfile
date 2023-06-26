@@ -1,0 +1,13 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+nucypher = {git = "https://github.com/nucypher/nucypher.git", ref = "dkg-dev-7"}
+typer = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.8"
