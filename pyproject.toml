@@ -12,3 +12,13 @@ Home = "https://electora.eu"
 [build-system]
 requires = ["flit_core >=3.2,<4"]
 build-backend = "flit_core.buildapi"
+
+[tool.ruff]
+select = ["E", "F", "I"]
+
+[tool.ruff.isort]
+known-first-party = ["electora_py"]
+
+[[tool.mypy.overrides]]
+module = "nucypher.*"
+ignore_missing_imports = true

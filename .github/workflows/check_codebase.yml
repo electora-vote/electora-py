@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.7]
+        python-version: [3.8]
     steps:
     - uses: actions/checkout@v3
     - name: Set up Python ${{ matrix.python-version }}
@@ -20,8 +20,11 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        python -m pip install black==23.1.0 ruff
+        python -m pip install pipenv
+        python -m pipenv install --dev
     - name: Check format with black
-      run: python -m black --check electora_py
+      run: pipenv run black --check electora_py
     - name: Lint with ruff
-      run: ruff --format=github electora_py
+      run: pipenv run ruff --format=github electora_py
+    - name: Check types with mypy
+      run: pipenv run mypy electora_py

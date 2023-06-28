@@ -1,11 +1,11 @@
-from typing import Optional, Dict
-from gql import gql, Client
-from gql.transport.aiohttp import AIOHTTPTransport
-from nucypher_core import ferveo
+from typing import Dict
 
-from nucypher.characters.lawful import Ursula, Bob
+from gql import Client, gql
+from gql.transport.aiohttp import AIOHTTPTransport
+from nucypher.characters.lawful import Bob, Ursula
 from nucypher.cli.utils import connect_to_blockchain
 from nucypher.utilities.emitters import StdoutEmitter
+from nucypher_core import ferveo
 
 _GOERLI_URI = "https://goerli.infura.io/v3/663d60ae0f504f168b362c2bda60f81c"
 _TEACHER_URI = "https://lynx.nucypher.network:9151"
@@ -35,7 +35,7 @@ BOB = Bob(
 
 
 def _fetch_vote_transactions(
-    election_id: str, endpoint: Optional[str] = _ARWEAVE_GQL_ENDPOINT
+    election_id: str, endpoint: str = _ARWEAVE_GQL_ENDPOINT
 ) -> Dict:
     """Fetches all arweave transactions tagged for a particular ballot ID."""
     transport = AIOHTTPTransport(url=endpoint)
@@ -47,7 +47,7 @@ def _fetch_vote_transactions(
     return result
 
 
-def fetch_votes(election_id: str, endpoint: Optional[str] = _ARWEAVE_GQL_ENDPOINT):
+def fetch_votes(election_id: str, endpoint: str = _ARWEAVE_GQL_ENDPOINT):
     transactions = _fetch_vote_transactions(election_id=election_id, endpoint=endpoint)
     raise NotImplementedError(transactions)
 
