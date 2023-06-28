@@ -34,14 +34,15 @@ BOB = Bob(
 )
 
 
-def _fetch_vote_transactions(election_id: str, endpoint: Optional[str] = _ARWEAVE_GQL_ENDPOINT) -> Dict:
+def _fetch_vote_transactions(
+    election_id: str, endpoint: Optional[str] = _ARWEAVE_GQL_ENDPOINT
+) -> Dict:
     """Fetches all arweave transactions tagged for a particular ballot ID."""
     transport = AIOHTTPTransport(url=endpoint)
     client = Client(transport=transport, fetch_schema_from_transport=True)
-    variables_map = {'tagName': _ELECTORA_ARWEAVE_TAG, 'electionId': election_id}
+    variables_map = {"tagName": _ELECTORA_ARWEAVE_TAG, "electionId": election_id}
     result = client.execute(
-        gql(_GET_ELECTION_VOTES_QUERY_TEMPLATE),
-        variable_values=variables_map
+        gql(_GET_ELECTION_VOTES_QUERY_TEMPLATE), variable_values=variables_map
     )
     return result
 
