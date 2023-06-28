@@ -10,6 +10,8 @@ gql = "*"
 
 [dev-packages]
 mypy = "*"
+black = "*"
+ruff = "*"
 
 [requires]
 python_version = "3.8"
