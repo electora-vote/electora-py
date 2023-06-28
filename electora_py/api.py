@@ -10,7 +10,7 @@ from nucypher.utilities.emitters import StdoutEmitter
 _GOERLI_URI = "https://goerli.infura.io/v3/663d60ae0f504f168b362c2bda60f81c"
 _TEACHER_URI = "https://lynx.nucypher.network:9151"
 _ELECTORA_ARWEAVE_TAG = "ballot_uuid"
-_ARWEAVE_GQL_ENDPOINT = "https://arweave.net/graphql"
+_ARWEAVE_GQL_ENDPOINT = "https://devnet.bundlr.network/graphql"
 _GET_ELECTION_VOTES_QUERY_TEMPLATE = """
 query getElectionVotes {
     transactions(tags: [{ name: "$tagName", values: ["$electionId"] }]) {
