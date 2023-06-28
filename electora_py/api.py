@@ -7,15 +7,10 @@ from nucypher.characters.lawful import Ursula, Bob
 from nucypher.cli.utils import connect_to_blockchain
 from nucypher.utilities.emitters import StdoutEmitter
 
-# Networks
-
 _GOERLI_URI = "https://goerli.infura.io/v3/663d60ae0f504f168b362c2bda60f81c"
 _TEACHER_URI = "https://lynx.nucypher.network:9151"
-
-# GraphQL
-
-_ELECTORA_ARWEAVE_TAG = "electora/ballot/uuid"
-_ARWEAVE_GQL_ENDPOINT = "https://arweave.net/graphql"  # TODO: Get this from somewhere else (config, env, round-robin, etc.)
+_ELECTORA_ARWEAVE_TAG = "ballot_uuid"
+_ARWEAVE_GQL_ENDPOINT = "https://arweave.net/graphql"
 _GET_ELECTION_VOTES_QUERY_TEMPLATE = """
 query getElectionVotes {
     transactions(tags: [{ name: "$tagName", values: ["$electionId"] }]) {
@@ -58,7 +53,6 @@ def _fetch_vote_transactions(election_id: str, endpoint: Optional[str] = _ARWEAV
 def fetch_votes(election_id: str, endpoint: Optional[str] = _ARWEAVE_GQL_ENDPOINT):
     transactions = _fetch_vote_transactions(election_id=election_id, endpoint=endpoint)
     print(transactions)
-    pass
 
 
 def _get_conditions(timestamp):
