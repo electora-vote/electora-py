@@ -1,4 +1,4 @@
-from typing import Dict, Optional
+from typing import Dict
 
 from gql import Client, gql
 from gql.transport.aiohttp import AIOHTTPTransport
@@ -35,7 +35,7 @@ BOB = Bob(
 
 
 def _fetch_vote_transactions(
-    election_id: str, endpoint: Optional[str] = _ARWEAVE_GQL_ENDPOINT
+    election_id: str, endpoint: str = _ARWEAVE_GQL_ENDPOINT
 ) -> Dict:
     """Fetches all arweave transactions tagged for a particular ballot ID."""
     transport = AIOHTTPTransport(url=endpoint)
@@ -47,7 +47,7 @@ def _fetch_vote_transactions(
     return result
 
 
-def fetch_votes(election_id: str, endpoint: Optional[str] = _ARWEAVE_GQL_ENDPOINT):
+def fetch_votes(election_id: str, endpoint: str = _ARWEAVE_GQL_ENDPOINT):
     transactions = _fetch_vote_transactions(election_id=election_id, endpoint=endpoint)
     raise NotImplementedError(transactions)
 

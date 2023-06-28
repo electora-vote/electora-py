@@ -18,3 +18,7 @@ select = ["E", "F", "I"]
 
 [tool.ruff.isort]
 known-first-party = ["electora_py"]
+
+[[tool.mypy.overrides]]
+module = "nucypher.*"
+ignore_missing_imports = true
