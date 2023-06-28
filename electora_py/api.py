@@ -12,8 +12,8 @@ _TEACHER_URI = "https://lynx.nucypher.network:9151"
 _ELECTORA_ARWEAVE_TAG = "ballot_uuid"
 _ARWEAVE_GQL_ENDPOINT = "https://devnet.bundlr.network/graphql"
 _GET_ELECTION_VOTES_QUERY_TEMPLATE = """
-query getElectionVotes {
-    transactions(tags: [{ name: "$tagName", values: ["$electionId"] }]) {
+query getElectionVotes ($tagName: String!, $electionId: String!) {
+    transactions(tags: [{ name: $tagName, values: [$electionId] }]) {
         edges {
             node {
                 id
@@ -38,11 +38,7 @@ def _fetch_vote_transactions(election_id: str, endpoint: Optional[str] = _ARWEAV
     """Fetches all arweave transactions tagged for a particular ballot ID."""
     transport = AIOHTTPTransport(url=endpoint)
     client = Client(transport=transport, fetch_schema_from_transport=True)
-    variables_map = {
-        'transactions': {
-            'tags': {'tagName': _ELECTORA_ARWEAVE_TAG, 'electionId': election_id}
-        }
-    }
+    variables_map = {'tagName': _ELECTORA_ARWEAVE_TAG, 'electionId': election_id}
     result = client.execute(
         gql(_GET_ELECTION_VOTES_QUERY_TEMPLATE),
         variable_values=variables_map
