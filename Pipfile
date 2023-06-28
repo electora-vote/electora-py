@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 nucypher = {git = "https://github.com/nucypher/nucypher.git", ref = "dkg-dev-7"}
 typer = "*"
+gql = "*"
 
 [dev-packages]
 
