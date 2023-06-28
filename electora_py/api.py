@@ -1,10 +1,27 @@
-from nucypher.characters.lawful import Bob, Ursula
+from typing import Optional, Dict
+from gql import gql, Client
+from gql.transport.aiohttp import AIOHTTPTransport
+from nucypher_core import ferveo
+
+from nucypher.characters.lawful import Ursula, Bob
 from nucypher.cli.utils import connect_to_blockchain
 from nucypher.utilities.emitters import StdoutEmitter
-from nucypher_core import ferveo
 
 _GOERLI_URI = "https://goerli.infura.io/v3/663d60ae0f504f168b362c2bda60f81c"
 _TEACHER_URI = "https://lynx.nucypher.network:9151"
+_ELECTORA_ARWEAVE_TAG = "ballot_uuid"
+_ARWEAVE_GQL_ENDPOINT = "https://devnet.bundlr.network/graphql"
+_GET_ELECTION_VOTES_QUERY_TEMPLATE = """
+query getElectionVotes ($tagName: String!, $electionId: String!) {
+    transactions(tags: [{ name: $tagName, values: [$electionId] }]) {
+        edges {
+            node {
+                id
+            }
+        }
+    }
+}
+"""
 
 BOB = Bob(
     eth_provider_uri=_GOERLI_URI,
@@ -17,8 +34,22 @@ BOB = Bob(
 )
 
 
-def fetch_votes():
-    pass
+def _fetch_vote_transactions(
+    election_id: str, endpoint: Optional[str] = _ARWEAVE_GQL_ENDPOINT
+) -> Dict:
+    """Fetches all arweave transactions tagged for a particular ballot ID."""
+    transport = AIOHTTPTransport(url=endpoint)
+    client = Client(transport=transport, fetch_schema_from_transport=True)
+    variables_map = {"tagName": _ELECTORA_ARWEAVE_TAG, "electionId": election_id}
+    result = client.execute(
+        gql(_GET_ELECTION_VOTES_QUERY_TEMPLATE), variable_values=variables_map
+    )
+    return result
+
+
+def fetch_votes(election_id: str, endpoint: Optional[str] = _ARWEAVE_GQL_ENDPOINT):
+    transactions = _fetch_vote_transactions(election_id=election_id, endpoint=endpoint)
+    raise NotImplementedError(transactions)
 
 
 def _get_conditions(timestamp):
