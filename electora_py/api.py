@@ -49,7 +49,7 @@ def _fetch_vote_transactions(
 
 def fetch_votes(election_id: str, endpoint: Optional[str] = _ARWEAVE_GQL_ENDPOINT):
     transactions = _fetch_vote_transactions(election_id=election_id, endpoint=endpoint)
-    raise NotImplementedError
+    raise NotImplementedError(transactions)
 
 
 def _get_conditions(timestamp):
