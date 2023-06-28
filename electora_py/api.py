@@ -1,11 +1,11 @@
-from typing import Optional, Dict
-from gql import gql, Client
-from gql.transport.aiohttp import AIOHTTPTransport
-from nucypher_core import ferveo
+from typing import Dict, Optional
 
-from nucypher.characters.lawful import Ursula, Bob
+from gql import Client, gql
+from gql.transport.aiohttp import AIOHTTPTransport
+from nucypher.characters.lawful import Bob, Ursula
 from nucypher.cli.utils import connect_to_blockchain
 from nucypher.utilities.emitters import StdoutEmitter
+from nucypher_core import ferveo
 
 _GOERLI_URI = "https://goerli.infura.io/v3/663d60ae0f504f168b362c2bda60f81c"
 _TEACHER_URI = "https://lynx.nucypher.network:9151"
