@@ -84,9 +84,18 @@ def fetch_votes(election_id: str, endpoint: Optional[str] = _ARWEAVE_GQL_ENDPOIN
 def _decrypt_votes(vote_ciphertexts) -> List[str]:
     """Decrypts a single encrypted vote."""
     cleartexts = list()
+    failed = 0
     for ciphertext in vote_ciphertexts:
-        cleartext = _decrypt_vote(ciphertext=ciphertext, timestamp=1687870663)
+        try:
+            cleartext = _decrypt_vote(
+                ciphertext=ciphertext,
+                timestamp=_ELECTION_END_TIMESTAMP
+            )
+        except Ursula.NotEnoughUrsulas:
+            failed += 1
+            continue
         cleartexts.append(cleartext)
+    print(f"{failed} invalid votes skipped out of {len(vote_ciphertexts)}")
     return cleartexts
 
 
