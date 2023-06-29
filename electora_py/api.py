@@ -14,6 +14,7 @@ from nucypher.utilities.emitters import StdoutEmitter
 
 _RITUAL_ID = 2
 _GOERLI_URI = "https://goerli.infura.io/v3/663d60ae0f504f168b362c2bda60f81c"
+_COORDINATOR_URI = "https://polygon-mumbai.infura.io/v3/a11313ddcf61443898b6a47e952d255c"
 _TEACHER_URI = "https://lynx.nucypher.network:9151"
 _ELECTORA_ARWEAVE_TAG = "ballot_uuid"
 _ARWEAVE_GQL_ENDPOINT = "https://devnet.bundlr.network/graphql"
@@ -32,6 +33,8 @@ query getElectionVotes ($tagName: String!, $electionId: String!) {
 BOB = Bob(
     eth_provider_uri=_GOERLI_URI,
     domain="lynx",
+    coordinator_network="mumbai",
+    coordinator_provider_uri=_COORDINATOR_URI,
     known_nodes=[
         Ursula.from_teacher_uri(
             teacher_uri=_TEACHER_URI, min_stake=0, provider_uri=_GOERLI_URI
