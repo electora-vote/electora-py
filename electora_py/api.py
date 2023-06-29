@@ -1,16 +1,14 @@
-from typing import Optional, Dict, List
+from typing import Dict, List
 
 import requests
 from gql import Client, gql
 from gql.transport.aiohttp import AIOHTTPTransport
-from nucypher_core import ferveo
-
 from nucypher.characters.lawful import Bob, Ursula
 from nucypher.cli.utils import connect_to_blockchain
 from nucypher.policy.conditions.lingo import ConditionLingo
 from nucypher.policy.conditions.types import Lingo
 from nucypher.utilities.emitters import StdoutEmitter
-
+from nucypher_core import ferveo
 
 _RITUAL_ID = 2
 _GOERLI_URI = "https://goerli.infura.io/v3/663d60ae0f504f168b362c2bda60f81c"
@@ -74,9 +72,7 @@ def _fetch_vote_data(transactions) -> List[str]:
     return vote_ciphertexts
 
 
-def fetch_votes(
-    election_id: str, endpoint: Optional[str] = _ARWEAVE_GQL_ENDPOINT
-) -> List[str]:
+def fetch_votes(election_id: str, endpoint: str = _ARWEAVE_GQL_ENDPOINT) -> List[str]:
     """Fetches and decrypts all valid votes for a particular election ID."""
     connect_to_blockchain(eth_provider_uri=_GOERLI_URI, emitter=StdoutEmitter())
     BOB.start_learning_loop(now=True)
@@ -87,7 +83,10 @@ def fetch_votes(
 
 
 def _decrypt_votes(vote_ciphertexts) -> List[str]:
-    """Decrypts a single encrypted vote.  If a vote cannot be decrypted, it is skipped."""
+    """Decrypts a single encrypted vote.
+
+    If a vote cannot be decrypted, it is skipped.
+    """
     cleartexts = list()
     failed = 0
     for ciphertext in vote_ciphertexts:
