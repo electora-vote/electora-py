@@ -88,12 +88,18 @@ def _decrypt_votes(vote_ciphertexts) -> List[str]:
         cleartexts.append(cleartext)
     return cleartexts
 
-def _get_conditions(timestamp):
+
+def _get_conditions(timestamp: int) -> Lingo:
     time_condition = {
-        "method": "timelock",
+        "method": "blocktime",
+        "chain": 5,
         "returnValueTest": {"comparator": ">=", "value": timestamp},
     }
-    return [time_condition]
+    conditions = {
+        "version": ConditionLingo.VERSION,
+        "condition": time_condition,
+    }
+    return conditions
 
 
 def _decrypt_vote(ciphertext, timestamp):
