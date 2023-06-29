@@ -14,7 +14,9 @@ from nucypher.utilities.emitters import StdoutEmitter
 
 _RITUAL_ID = 2
 _GOERLI_URI = "https://goerli.infura.io/v3/663d60ae0f504f168b362c2bda60f81c"
-_COORDINATOR_URI = "https://polygon-mumbai.infura.io/v3/a11313ddcf61443898b6a47e952d255c"
+_COORDINATOR_URI = (
+    "https://polygon-mumbai.infura.io/v3/a11313ddcf61443898b6a47e952d255c"
+)
 _TEACHER_URI = "https://lynx.nucypher.network:9151"
 _ELECTORA_ARWEAVE_TAG = "ballot_uuid"
 _ARWEAVE_GQL_ENDPOINT = "https://devnet.bundlr.network/graphql"
@@ -59,6 +61,7 @@ def _fetch_vote_transactions(
 
 
 def _fetch_vote_data(transactions) -> List[str]:
+    """parses gql response and fetches vote data from arweave."""
     edges = transactions["transactions"]["edges"]
     vote_ciphertexts = list()
     for transaction in edges:
@@ -71,8 +74,10 @@ def _fetch_vote_data(transactions) -> List[str]:
     return vote_ciphertexts
 
 
-def fetch_votes(election_id: str, endpoint: Optional[str] = _ARWEAVE_GQL_ENDPOINT) -> List[str]:
-    """Fetches and decrypts all votes for a particular election ID."""
+def fetch_votes(
+    election_id: str, endpoint: Optional[str] = _ARWEAVE_GQL_ENDPOINT
+) -> List[str]:
+    """Fetches and decrypts all valid votes for a particular election ID."""
     connect_to_blockchain(eth_provider_uri=_GOERLI_URI, emitter=StdoutEmitter())
     BOB.start_learning_loop(now=True)
     transactions = _fetch_vote_transactions(election_id=election_id, endpoint=endpoint)
@@ -82,14 +87,13 @@ def fetch_votes(election_id: str, endpoint: Optional[str] = _ARWEAVE_GQL_ENDPOIN
 
 
 def _decrypt_votes(vote_ciphertexts) -> List[str]:
-    """Decrypts a single encrypted vote."""
+    """Decrypts a single encrypted vote.  If a vote cannot be decrypted, it is skipped."""
     cleartexts = list()
     failed = 0
     for ciphertext in vote_ciphertexts:
         try:
             cleartext = _decrypt_vote(
-                ciphertext=ciphertext,
-                timestamp=_ELECTION_END_TIMESTAMP
+                ciphertext=ciphertext, timestamp=_ELECTION_END_TIMESTAMP
             )
         except Ursula.NotEnoughUrsulas:
             failed += 1
@@ -112,7 +116,7 @@ def _get_conditions(timestamp: int) -> Lingo:
     return conditions
 
 
-def _decrypt_vote(ciphertext, timestamp):
+def _decrypt_vote(ciphertext, timestamp) -> str:
     ciphertext = ferveo.Ciphertext.from_bytes(bytes.fromhex(ciphertext))
     cleartext = BOB.threshold_decrypt(
         ritual_id=_RITUAL_ID,
