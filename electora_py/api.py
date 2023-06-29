@@ -3,6 +3,7 @@ from typing import Dict, List
 import requests
 from gql import Client, gql
 from gql.transport.aiohttp import AIOHTTPTransport
+from javascript import require
 from nucypher.characters.lawful import Bob, Ursula
 from nucypher.cli.utils import connect_to_blockchain
 from nucypher.policy.conditions.lingo import ConditionLingo
@@ -125,8 +126,17 @@ def _decrypt_vote(ciphertext, timestamp) -> str:
     return bytes(cleartext).decode()
 
 
-def verify_vote(vote):
-    pass
+async def verify_proof(proof: str) -> bool:
+    sismo = require("@sismo-core/sismo-connect-server")
+    config = {"appId": "0x022828235eed6dc1978b239bdd735bae"}
+    connection = sismo.SismoConnect({"config": config})
+    response = await sismo.SismoConnectResponse(proof, 1)
+    result = await connection.verify(response)
+    return result
+
+
+_test = verify_proof("test")
+assert _test is None
 
 
 def count_votes():
