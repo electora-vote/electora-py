@@ -19,6 +19,7 @@ _TEACHER_URI = "https://lynx.nucypher.network:9151"
 _ELECTORA_ARWEAVE_TAG = "ballot_uuid"
 _ARWEAVE_GQL_ENDPOINT = "https://devnet.bundlr.network/graphql"
 _ARWEAVE_DATA_ENDPOINT = "https://arweave.net/"
+_ELECTION_END_TIMESTAMP = 1688028284.323  # ballot 70e4edc7c0247a40960357e23111b6b0
 _GET_ELECTION_VOTES_QUERY_TEMPLATE = """
 query getElectionVotes ($tagName: String!, $electionId: String!) {
     transactions(tags: [{ name: $tagName, values: [$electionId] }]) {
