@@ -1,5 +1,5 @@
 {
   "dependencies": {
-    "@sismo-core/sismo-connect-server": "^0.0.13"
+    "@sismo-core/sismo-connect-server": "^0.0.11"
   }
 }
