@@ -8,6 +8,7 @@ nucypher = {git = "https://github.com/nucypher/nucypher.git", ref = "dkg-dev-7"}
 typer = "*"
 gql = "*"
 javascript = "*"
+types-requests = "*"
 
 [dev-packages]
 mypy = "*"
