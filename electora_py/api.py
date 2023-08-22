@@ -52,16 +52,15 @@ def _fetch_vote_transactions(
     transport = AIOHTTPTransport(url=endpoint)
     client = Client(transport=transport, fetch_schema_from_transport=True)
     variables_map = {"tagName": _ELECTORA_ARWEAVE_TAG, "electionId": election_id}
-    result = client.execute(
+    return client.execute(
         gql(_GET_ELECTION_VOTES_QUERY_TEMPLATE), variable_values=variables_map
     )
-    return result
 
 
 def _fetch_vote_data(transactions) -> List[str]:
     """parses gql response and fetches vote data from arweave."""
     edges = transactions["transactions"]["edges"]
-    vote_ciphertexts = list()
+    vote_ciphertexts = []
     for transaction in edges:
         transaction_id = transaction["node"]["id"]
         response = requests.get(_ARWEAVE_DATA_ENDPOINT + transaction_id)
@@ -78,8 +77,7 @@ def fetch_votes(election_id: str, endpoint: str = _ARWEAVE_GQL_ENDPOINT) -> List
     BOB.start_learning_loop(now=True)
     transactions = _fetch_vote_transactions(election_id=election_id, endpoint=endpoint)
     ciphertexts = _fetch_vote_data(transactions=transactions)
-    cleartexts = _decrypt_votes(vote_ciphertexts=ciphertexts)
-    return cleartexts
+    return _decrypt_votes(vote_ciphertexts=ciphertexts)
 
 
 def _decrypt_votes(vote_ciphertexts) -> List[str]:
@@ -87,7 +85,7 @@ def _decrypt_votes(vote_ciphertexts) -> List[str]:
 
     If a vote cannot be decrypted, it is skipped.
     """
-    cleartexts = list()
+    cleartexts = []
     failed = 0
     for ciphertext in vote_ciphertexts:
         try:
@@ -108,11 +106,10 @@ def _get_conditions(timestamp: int) -> Lingo:
         "chain": 5,
         "returnValueTest": {"comparator": ">=", "value": timestamp},
     }
-    conditions = {
+    return {
         "version": ConditionLingo.VERSION,
         "condition": time_condition,
     }
-    return conditions
 
 
 def _decrypt_vote(ciphertext, timestamp) -> str:
