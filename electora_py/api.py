@@ -1,8 +1,10 @@
+import json
 from typing import Dict, List
 
 import requests
 from gql import Client, gql
 from gql.transport.aiohttp import AIOHTTPTransport
+from javascript import require  # type: ignore
 from nucypher.characters.lawful import Bob, Ursula
 from nucypher.cli.utils import connect_to_blockchain
 from nucypher.policy.conditions.lingo import ConditionLingo
@@ -31,6 +33,10 @@ query getElectionVotes ($tagName: String!, $electionId: String!) {
     }
 }
 """
+_SISMO_APP_ID = "0x022828235eed6dc1978b239bdd735bae"
+
+_TEST_COMPRESSED_PROOF = "H4sIAAAAAAAAA8VVvY5eRwh9l6-2IxhmBnAZpUltp4pcAAP2Svun_daWLcvvHjZypEgpXeTe5oph4MA5cL9d7PHx93N5c4EvMIb0Syvz7BOoLD5I_Rym5ZaXV5d7u8vro0X2hTu7uW_T53y63jzct-F6c717eB0P9_cZz68_Yx8-Pj081PXy5s9vl7i1m7t_fb77-thR4NXlw9PDp38gnL1i1zQ9Wb4zNUIhneY0ZMh1-eH-7qZxPNvdY9-6tef-fkFit586JL665JfnJ_vNnq2P--Dm-jZvG5P5bf769Y9rPl3elN1e8_v7HxB_-MKXYVhHKkqP-do5I9Y-CLsgxQqBeKCFVxb7WVQHsg3tsXBpHpCxvauY3UEO8EV0CsA4OAKdUL3rItt0gjhlzJgsylNDcroPXk5qmCNwEmjnn5MhiHair3aB0amXSDJLuNQCDJ_Y2Safjl8NMvjMHWiSyHimEdhcChwDuXSSjqVEWl2cuBBhhlHniDnGnI0Yj6WfjgKwjYfuiVNogJBJ2SkdsDVWHN-4Nuvua6kADmu-pICzJY5o1LasUyJCweAcrt5hrctMWrOJjUNZWzfjDK0hB1DGgTWS8MR50QN44-wwrUOWxZu8NoNKkHZ92321dSQqrnEOVpe-hkidgVtFeG4vhxLovp-VUhxbUo0dtCbE1obJx6Kj_t8PN_q1caQv7gGUVkfr42SEw45WoWNjn4szbSpYa2HqGErahHnzwtB8yFyrWcijSiVdmQCv6raQMImNVRDavTaFFXCqNY_SbTB0axFVa7PWaNEMskSM4RBtGwlNJCen7eSm8oW8LX1POKGoG-qYAEiOYgHtvUe16Ox0Yd660k1yas8z2GDt4nlw9KSNGGXRCnNkbzF6rezN01IU78HBmqiHe8AOM6qtF1rFW-nHbI8RSl1NC_gnu48tQqfFDbRbuie7CxcfpV5FUD2IrnhokvS40nErYBnqQPX387P5AYta8DY6AQ2XUWejkvg2SmcENu3VklSuqp6NybOsCKr3hCzHFatxrp49mL0JhuoZMJCMJXNDL5_VB3RQeqd7aE9Hj910PGND_jT8nw1w-c_y7v38-eb-w9v4mHcvv52PX8-Tvb6OX_Dy_f33vwBmwIwSwAYAAA"  # noqa: E501
+_TEST_GROUP_ID = "0xd65c6f4a9defb6ee9cc90eb344a170e5"
 
 BOB = Bob(
     eth_provider_uri=_GOERLI_URI,
@@ -125,8 +131,27 @@ def _decrypt_vote(ciphertext, timestamp) -> str:
     return bytes(cleartext).decode()
 
 
-def verify_vote(vote):
-    pass
+def verify_proof(compressed_response: str, group_id: str) -> bool:
+    sismo_server = require("@sismo-core/sismo-connect-server", "0.0.11")
+    pako = require("pako")
+    js_base64 = require("js-base64")
+    config = {"appId": _SISMO_APP_ID}
+    connection = sismo_server.SismoConnect(config)
+    ungzip = pako.ungzip
+    toUint8Array = js_base64.toUint8Array
+    uncompressed_response = json.loads(
+        ungzip(toUint8Array(compressed_response), {"to": "string"})
+    )
+    print(uncompressed_response)
+    result = connection.verify(
+        uncompressed_response,
+        {"claims": [{"groupId": group_id}]},
+    )
+    return result
+
+
+_test = verify_proof(_TEST_COMPRESSED_PROOF, _TEST_GROUP_ID)
+print(_test)
 
 
 def count_votes():
